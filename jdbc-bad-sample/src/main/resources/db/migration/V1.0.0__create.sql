@@ -1,0 +1,10 @@
+CREATE TABLE TABLE_A (
+    id INT(11) AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    name VARCHAR(30),
+    address VARCHAR (256)
+);
+
+CREATE TABLE TABLE_B (
+    name VARCHAR(30),
+    address VARCHAR (256)
+);
