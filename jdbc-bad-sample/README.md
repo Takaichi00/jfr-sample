@@ -9,6 +9,27 @@ Java で JDBC Driver を用いて DB 接続をを行う際、`PreparedStatement`
 private static final String localConnectionUrl = "jdbc:mysql://127.0.0.1:3306/test_database";
 ```
 
+- １万件のデータ生成 & insert
+```
+for i in {1..10000}
+do
+echo "$i,\"name$i\",null" >> insert_tableA.csv
+done
+
+for i in {1..10000}
+do
+echo "\"name$i\",\"address$i\"" >> insert_tableB.csv
+done
+
+# https://mita2db.hateblo.jp/entry/2020/01/13/163218
+mysql -u root -h 127.0.0.1 -P 13306 -p -D test_database --local-infile=1
+
+mysql> SET GLOBAL local_infile=on;
+mysql> load data local infile "/Users/totakaic/ideaProjects/jfr-sample/jdbc-bad-sample/src/main/resources/insert_tableA.csv" into table TABLE_A fields terminated by ',' optionally enclosed by '"';
+mysql> load data local infile "/Users/totakaic/ideaProjects/jfr-sample/jdbc-bad-sample/src/main/resources/insert_tableB.csv" into table TABLE_B fields terminated by ',' optionally enclosed by '"';
+
+```
+
 - `com.takaichi00.sample.badjdbcconnection.Main` の 以下の処理をコメントアウトします。
 
 ```$xslt
