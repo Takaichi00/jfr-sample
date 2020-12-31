@@ -1,6 +1,7 @@
 # jfr-sample
 
 ## 参考文献
+- [サンプルプログラムはこちらのリポジトリを参考](https://github.com/Takaichi00/jdbc-bad-sample)
 - [最初の1リクエスト目で何をしているのか？](https://b.chiroito.dev/entry/2020/09/20/212719)
 - [Java Flight Recorderでトラブルシューティング](https://qiita.com/sahn/items/952f8c1fdc463fa372b4)
 - [JDBC & JFR Sample](https://github.com/chiroito/Jfr4Jdbc)
