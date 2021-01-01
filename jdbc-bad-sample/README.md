@@ -9,11 +9,19 @@ Java で JDBC Driver を用いて DB 接続をを行う際、`PreparedStatement`
 private static final String localConnectionUrl = "jdbc:mysql://127.0.0.1:3306/test_database";
 ```
 
+- テーブルのスキーマは flyway を実行することで作成できます
+```
+mvn flyway:migrate
+
+# スキーマ管理を再作成するときは以下のコマンドを実行します
+mvn flyway:clean flyway:migrate
+```
+
 - １万件のデータ生成 & insert
 ```
 for i in {1..10000}
 do
-echo "$i,\"name$i\",null" >> insert_tableA.csv
+echo "$i,\"name$i\",NULL" >> insert_tableA.csv
 done
 
 for i in {1..10000}
