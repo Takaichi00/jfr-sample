@@ -83,7 +83,7 @@ public class Main {
 
       printAllInformation(updateAttributes);
 
-      toSqlFile(new File("Update.sql"), updateAttributes);
+      toSqlFile(new File("./output/Update.sql"), updateAttributes);
 
     } catch (SQLException e) {
       e.printStackTrace();
