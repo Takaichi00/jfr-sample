@@ -50,12 +50,11 @@ mvn clean package
 java -XX:StartFlightRecording=dumponexit=true,filename=./output/jdbc-bad-sample-non-FULLGC.jfr -Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
 ```
 
-- JMC を起動し、「ファイル(F)」→「ファイルを開く」から生成した jdbc-bad-sample.jfr を選択すると分析結果が表示されていることを確認します。
-
 ## FULL GC を発生させて JFR で解析する
 - `com.takaichi00.sample.badjdbcconnection.Main` の 以下の処理をコメントアウトします。
 
 ```$xslt
+
 stmt1.close();
 rs1.close();
 
@@ -81,11 +80,7 @@ mvn clean package
 java -XX:StartFlightRecording=dumponexit=true,filename=./output/jdbc-bad-sample-FULLGC.jfr -Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
 ```
 
-- 実行したディレクトリに gc.log が生成されるので、[GC Viewer](https://github.com/chewiebug/GCViewer/wiki/Changelog) でみてみると視覚的に FullGC が発生することが確認できます。
-
-- close 処理を実施しなかった場合
-![bad gc log](./img/nonclosed-preparedstatement-resultset.png.png)
-
-- close 処理を実施した場合
-![good gc log](img/closed-preparedstatement-resultset.png)
+- JMC を起動し、「ファイル(F)」→「ファイルを開く」から生成した jdbc-bad-sample-non-FULLGC.jfr, jdbc-bad-sample-FULLGC.jfr を選択すると分析結果が表示されていることを確認します。
+![non-FULLGC](./img/non-FULLGC-jfr.png)
+![non-FULLGC](./img/FULLGC-jfr.png)
 
