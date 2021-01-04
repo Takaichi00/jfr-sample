@@ -82,5 +82,17 @@ java -XX:StartFlightRecording=dumponexit=true,filename=./output/jdbc-bad-sample-
 
 - JMC を起動し、「ファイル(F)」→「ファイルを開く」から生成した jdbc-bad-sample-non-FULLGC.jfr, jdbc-bad-sample-FULLGC.jfr を選択すると分析結果が表示されていることを確認します。
 ![non-FULLGC](./img/non-FULLGC-jfr.png)
-![non-FULLGC](./img/FULLGC-jfr.png)
+![FULLGC](./img/FULLGC-jfr.png)
 
+# 通常時と FullGC 発生時の比較
+
+## 自動分析の結果
+
+### 通常時
+![auto-diagnosis-FULLGC](./img/auto-diagnosis-non-FULLGC.png)
+
+#### 空き物理メモリー
+- `-Xms20M -Xmx20M` を起動時に指定しているにも関わらず、「使用されたメモリーの最大量は15.8 GiBでした。」とある。
+- 実行した環境は 16 GB のマシンなので、ほぼほぼマシン上限のメモリを使用していることがわかる。
+- JVM の native メモリが肥大化している可能性がある?
+- [Using Native Memory by JVM](https://dev.classmethod.jp/articles/using-native-memory-by-jvm/)
