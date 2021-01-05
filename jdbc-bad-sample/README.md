@@ -95,4 +95,12 @@ java -XX:StartFlightRecording=dumponexit=true,filename=./output/jdbc-bad-sample-
 - `-Xms20M -Xmx20M` を起動時に指定しているにも関わらず、「使用されたメモリーの最大量は15.8 GiBでした。」とある。
 - 実行した環境は 16 GB のマシンなので、ほぼほぼマシン上限のメモリを使用していることがわかる。
 - JVM の native メモリが肥大化している可能性がある?
+    - メモリータブを見てみると、heap 領域は正しく設定されてそう
+        - ![heap-nonFullGC](img/heap-nonFULLGC.png)
+    - 「使用サイズ」と「合計サイズ」はたしかに 16GB 使用している
+        - ![heap-nonFullGC](img/memory-nonFULLGC.png)
 - [Using Native Memory by JVM](https://dev.classmethod.jp/articles/using-native-memory-by-jvm/)
+- `-XX:MaxMetaspaceSize` を指定して実行してみるも変わらず
+```
+java -XX:StartFlightRecording=dumponexit=true,filename=./output/jdbc-bad-sample-non-FULLGC-limit-metaspace.jfr -Xms20M -Xmx20M -XX:MaxMetaspaceSize=1G -jar ./target/jdbc-bad-sample.jar
+```
