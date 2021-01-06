@@ -104,3 +104,106 @@ java -XX:StartFlightRecording=dumponexit=true,filename=./output/jdbc-bad-sample-
 ```
 java -XX:StartFlightRecording=dumponexit=true,filename=./output/jdbc-bad-sample-non-FULLGC-limit-metaspace.jfr -Xms20M -Xmx20M -XX:MaxMetaspaceSize=1G -jar ./target/jdbc-bad-sample.jar
 ```
+- 実行マシン自体のメモリ使用率を見ているのかもしれない
+    - Docker for Mac の割当メモリを 10GB にしてたので、4GB に設定して再度実行してみる
+```
+java -XX:StartFlightRecording=dumponexit=true,filename=./output/jdbc-bad-sample-vacant-memory.jfr -Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
+```
+- しかし状況は変わらず...
+
+- top コマンドでも確認してみるが、メモリ使用率が15GB以上ということはない
+```
+PID    COMMAND      %CPU TIME     #TH  #WQ  #POR MEM   PURG CMPR PGRP  PPID STATE    BOOSTS    %CPU_ME %CPU_OTHRS UID       FAULTS COW  MSGS
+58253  java         2.0  00:08.73 23   1    113  320M  0B   0B   58253 1593 sleeping *0[1]     0.00000 0.00000    983181095 92742+ 1917 4550
+```
+
+- ネイティブ・メモリー・トラッキング(NMT) を利用してネイティブメモリをトラッキングしてみる
+    - https://docs.oracle.com/javase/jp/8/docs/technotes/guides/troubleshoot/tooldescr007.html
+```
+java -XX:NativeMemoryTracking=summary -Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
+jps
+jcmd 58080 VM.native_memory summary
+```
+- 以下のような結果に。Total reserved=1419387KB≒1,386MB, committed=133959KB≒130MB と、15GB 使われるようなことはない...
+```
+Native Memory Tracking:
+
+Total: reserved=1419387KB, committed=133959KB
+-                 Java Heap (reserved=20480KB, committed=20480KB)
+                            (mmap: reserved=20480KB, committed=20480KB)
+
+-                     Class (reserved=1063301KB, committed=14853KB)
+                            (classes #3229)
+                            (  instance classes #2954, array classes #275)
+                            (malloc=389KB #6608)
+                            (mmap: reserved=1062912KB, committed=14464KB)
+                            (  Metadata:   )
+                            (    reserved=14336KB, committed=12800KB)
+                            (    used=12348KB)
+                            (    free=452KB)
+                            (    waste=0KB =0.00%)
+                            (  Class space:)
+                            (    reserved=1048576KB, committed=1664KB)
+                            (    used=1412KB)
+                            (    free=252KB)
+                            (    waste=0KB =0.00%)
+
+-                    Thread (reserved=22618KB, committed=22618KB)
+                            (thread #20)
+                            (stack: reserved=22528KB, committed=22528KB)
+                            (malloc=67KB #122)
+                            (arena=23KB #38)
+
+-                      Code (reserved=248177KB, committed=11197KB)
+                            (malloc=489KB #2755)
+                            (mmap: reserved=247688KB, committed=10708KB)
+
+-                        GC (reserved=42125KB, committed=42125KB)
+                            (malloc=8593KB #2088)
+                            (mmap: reserved=33532KB, committed=33532KB)
+
+-                  Compiler (reserved=136KB, committed=136KB)
+                            (malloc=38KB #130)
+                            (arena=98KB #4)
+
+-                     JVMCI (reserved=30KB, committed=30KB)
+                            (malloc=30KB #122)
+
+-                  Internal (reserved=622KB, committed=622KB)
+                            (malloc=590KB #1128)
+                            (mmap: reserved=32KB, committed=32KB)
+
+-                     Other (reserved=10KB, committed=10KB)
+                            (malloc=10KB #2)
+
+-                    Symbol (reserved=3930KB, committed=3930KB)
+                            (malloc=3059KB #27392)
+                            (arena=871KB #1)
+
+-    Native Memory Tracking (reserved=675KB, committed=675KB)
+                            (malloc=6KB #83)
+                            (tracking overhead=668KB)
+
+-        Shared class space (reserved=16980KB, committed=16980KB)
+                            (mmap: reserved=16980KB, committed=16980KB)
+
+-               Arena Chunk (reserved=164KB, committed=164KB)
+                            (malloc=164KB)
+
+-                   Logging (reserved=4KB, committed=4KB)
+                            (malloc=4KB #180)
+
+-                 Arguments (reserved=18KB, committed=18KB)
+                            (malloc=18KB #475)
+
+-                    Module (reserved=73KB, committed=73KB)
+                            (malloc=73KB #1305)
+
+-              Synchronizer (reserved=36KB, committed=36KB)
+                            (malloc=36KB #298)
+
+-                 Safepoint (reserved=8KB, committed=8KB)
+                            (mmap: reserved=8KB, committed=8KB)
+```
+
+→ 一旦おいておく
