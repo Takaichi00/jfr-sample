@@ -344,3 +344,19 @@ java.util.concurrent.ConcurrentHashMap$Node (21)
 java -XX:StartFlightRecording=dumponexit=true,filename=./output/jdbc-bad-sample-BiasedLock.jfr -XX:BiasedLockingStartupDelay=10 -Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
 ```
 → しかし変わらず。調査する必要がありそう
+
+- [Java Platform, Standard Edition JRockitからHotSpotへの移行ガイド](https://docs.oracle.com/javacomponents/jp/jrockit-hotspot/migration-guide/migissues.htm)
+```
+UseBiasedLockingオプションは競合しない同期のパフォーマンスを向上します。このオプションはデフォルトで有効化されています。
+
+ただし、アプリケーションに競合の多い同期がある場合、UseBiasedLockingを無効化するとパフォーマンスが向上します。
+
+HotSpotに移行した後にロック/同期によるパフォーマンスの問題に直面している場合、このオプションをオフにするとパフォーマンスがいくらか向上する可能性があります。
+```
+→ 「HotSpotに移行した後にロック/同期によるパフォーマンスの問題に直面している場合、このオプションをオフにするとパフォーマンスがいくらか向上する可能性があります。」
+
+- [Java Platform, Standard Edition JRockitからHotSpotへの移行ガイド](https://docs.oracle.com/javacomponents/jp/jrockit-hotspot/migration-guide/runtime-opt.htm)
+```
+UseBiasedLockingは競合しない同期のパフォーマンスを向上します。このオプションはデフォルトで有効化されています。ただし、アプリケーションに競合の多い同期がある場合、UseBiasedLockingを無効化するとパフォーマンスが向上します。
+```
+→ 「アプリケーションに競合の多い同期がある場合」が `com.mysql.cj.jdbc.result.ResultSetImpl` にあたるものと思われる
