@@ -338,4 +338,9 @@ java.util.concurrent.ConcurrentHashMap$Node (21)
 ```
 
 - バイアスロック
- - [Biased Lockingのパフォーマンス効果](https://kensir0u.hatenadiary.org/entry/20090517/1242516596)
+    - [Biased Lockingのパフォーマンス効果](https://kensir0u.hatenadiary.org/entry/20090517/1242516596)
+    - `-XX:BiasedLockingStartupDelay=<time in ms>` を付与して実行してみる
+```
+java -XX:StartFlightRecording=dumponexit=true,filename=./output/jdbc-bad-sample-BiasedLock.jfr -XX:BiasedLockingStartupDelay=10 -Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
+```
+→ しかし変わらず。調査する必要がありそう
