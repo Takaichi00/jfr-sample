@@ -360,3 +360,7 @@ HotSpotに移行した後にロック/同期によるパフォーマンスの問
 UseBiasedLockingは競合しない同期のパフォーマンスを向上します。このオプションはデフォルトで有効化されています。ただし、アプリケーションに競合の多い同期がある場合、UseBiasedLockingを無効化するとパフォーマンスが向上します。
 ```
 → 「アプリケーションに競合の多い同期がある場合」が `com.mysql.cj.jdbc.result.ResultSetImpl` にあたるものと思われる
+
+# ボトルネックの検出
+- [4 JFRを使用したパフォーマンスの問題のトラブルシューティング](https://docs.oracle.com/javase/jp/9/troubleshoot/troubleshoot-performance-issues-using-jfr.htm) を参考に見ていく
+
