@@ -362,5 +362,9 @@ UseBiasedLockingは競合しない同期のパフォーマンスを向上しま�
 → 「アプリケーションに競合の多い同期がある場合」が `com.mysql.cj.jdbc.result.ResultSetImpl` にあたるものと思われる
 
 # ボトルネックの検出
-- [4 JFRを使用したパフォーマンスの問題のトラブルシューティング](https://docs.oracle.com/javase/jp/9/troubleshoot/troubleshoot-performance-issues-using-jfr.htm) を参考に見ていく
 
+- [4 JFRを使用したパフォーマンスの問題のトラブルシューティング](https://docs.oracle.com/javase/jp/9/troubleshoot/troubleshoot-performance-issues-using-jfr.htm) を参考に見ていく
+- Java アプリケーションを比較すると、ResultSet と Statement を適切に close していた場合は適切にマイナー GC が発生してヒープが開放されているのに対し、close しなかった場合はマイナー GC が発生してもヒープがあまり減らず、FULLGC が発生するようになり、FULLGC のヒープ減少量よりもヒープ上昇量が上回ったため OOM が発生しているように見える
+   - close していない JFR を見た時、どこを見れば FULLGC が発生している原因を特定できるかという観点で見ていく
+![java-applicaiton-OK](img/java-applicaiton-OK.png)
+![java-applicaiton-NG](img/java-applicaiton-NG.png)
