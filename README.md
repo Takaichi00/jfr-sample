@@ -368,3 +368,6 @@ UseBiasedLockingは競合しない同期のパフォーマンスを向上しま�
    - close していない JFR を見た時、どこを見れば FULLGC が発生している原因を特定できるかという観点で見ていく
 ![java-applicaiton-OK](img/java-applicaiton-OK.png)
 ![java-applicaiton-NG](img/java-applicaiton-NG.png)
+
+- 「ガベージコレクション」を見ると、最初は New 領域と Old 領域に対する GC が走っているが、徐々に FullGC が発生する頻度が高まっていき、最終的には FullGC が頻発する状況になってしまった。
+![GC-NG](img/GC-NG.png)
