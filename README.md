@@ -371,3 +371,11 @@ UseBiasedLockingは競合しない同期のパフォーマンスを向上しま�
 
 - 「ガベージコレクション」を見ると、最初は New 領域と Old 領域に対する GC が走っているが、徐々に FullGC が発生する頻度が高まっていき、最終的には FullGC が頻発する状況になってしまった。
 ![GC-NG](img/GC-NG.png)
+
+- メモリの統計情報を見たいが、「メモリー」タブを開いても詳細な情報は取得できない
+![Memory-NG](img/Memory-NG.png)
+- [4 JFRを使用したパフォーマンスの問題のトラブルシューティング](https://docs.oracle.com/javase/jp/9/troubleshoot/troubleshoot-performance-issues-using-jfr.htm#GUID-82335401-BDC8-47E5-871A-174B8B3AAD8C) によれば、ヒープ統計を有効にすればメモリー・リークのデバックに役立つとの記載がある。
+    - [3 メモリー・リークのトラブルシューティング](https://docs.oracle.com/javase/jp/9/troubleshoot/troubleshoot-memory-leaks.htm#GUID-FA5677A5-B175-40B4-B7F0-851118B6B7AD) も参考にとのこと
+    
+## ヒープ統計を有効にして OOM を発生させる
+TBD
