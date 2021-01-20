@@ -378,4 +378,16 @@ UseBiasedLockingは競合しない同期のパフォーマンスを向上しま�
     - [3 メモリー・リークのトラブルシューティング](https://docs.oracle.com/javase/jp/9/troubleshoot/troubleshoot-memory-leaks.htm#GUID-FA5677A5-B175-40B4-B7F0-851118B6B7AD) も参考にとのこと
     
 ## ヒープ統計を有効にして OOM を発生させる
-TBD
+
+- `path-to-gc-roots=true` オプションを追加して実行する
+```
+java \
+-XX:StartFlightRecording=\
+dumponexit=true,\
+filename=./output/jdbc-bad-sample-FULLGC-Enable-gc-roots.jfr,\
+disk=true,\
+path-to-gc-roots=true \
+-Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
+```
+![fullgc-heap-live-set](img/fullgc-heap-live-set.png)
+- すると、「ヒープのライブ・セット傾向」が出力され、2つのリーク候補を特定できた。
