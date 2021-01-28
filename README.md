@@ -379,7 +379,10 @@ UseBiasedLockingは競合しない同期のパフォーマンスを向上しま�
     
 ## ヒープ統計を有効にして OOM を発生させる
 
-- `path-to-gc-roots=true` オプションを追加して実行する
+- `path-to-gc-roots=true` オプションを追加して実行する (以下参考 URL)
+    - https://docs.oracle.com/javase/jp/11/troubleshoot/troubleshoot-memory-leaks.html#GUID-01CA595F-83F0-431F-876A-4138E68E34D2
+    - https://craftingjava.com/blog/using-java-flight-recorder-with-openjdk-11/
+    - https://matsumana.info/blog/2018/10/16/jdk11-flight-recorder/ 
 ```
 java \
 -XX:StartFlightRecording=\
@@ -391,3 +394,38 @@ path-to-gc-roots=true \
 ```
 ![fullgc-heap-live-set](img/fullgc-heap-live-set.png)
 - すると、「ヒープのライブ・セット傾向」が出力され、2つのリーク候補を特定できた。
+- 内容を確認すると、`AbandonedConnectionCleanupThread` というクラスがヒープを食っているよう
+    - [MySQL Connector/J (JDBC ドライバ)の罠まとめ](https://saiya-moebius.hatenablog.com/entry/2014/08/20/230445)
+    - ↑ によると、MySQL Connector/J が提供する機能で、放置された Connection を close するためのスレッドのよう
+    - 今回の場合、` DriverManager.getConnection()` で取得した Connection は try-with-resource によって close されていることが予測されるが、`PreparedStatement` と `ResultSet` に関しては close をしていない。
+    - よってこれらの close されていない `PreparedStatement` と `ResultSet` を close するとどうなるかを検証する
+
+```
+java \
+-XX:StartFlightRecording=\
+dumponexit=true,\
+filename=./output/jdbc-bad-sample-non-FULLGC-Enable-gc-roots.jfr,\
+disk=true,\
+path-to-gc-roots=true \
+-Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
+``` 
+![non-fullgc-heap-live-set](img/non-fullgc-heap-live-set.png)    
+- 今度はリーク候補が出ていないことがわかる
+
+## FullGC が発生するときとそうでない場合を比較する
+FullGC が発生している JMC と FullGC が発生しない場合は主に以下の違いがある
+
+| 項目 | FullGC | nonFull GC |
+| ---- | ---- | ---- |
+| 「ライブ・オブジェクトのサンプル | ClassLoaders$AppClassLoader | Class |
+| 説明 | <unknown> : System Dictionary | Stack Variable : Threads (Thread Name: mysql-cj-abandoned-connection-cleanup) |
+
+- FullGC が発生していないときの `Stack Variable : Threads (Thread Name: mysql-cj-abandoned-connection-cleanup)` というのは [MySQL Connector/J (JDBC ドライバ)の罠まとめ](https://saiya-moebius.hatenablog.com/entry/2014/08/20/230445) にて記載されている AbandonedConnectionCleanupThread というスレッドであることがわかる
+    - 一方 FullGC が発生すると、↑ がなくなり、代わりに `ClassLoaders$AppClassLoader` という記載になっている
+    - 放置された Connection を close するために `AbandonedConnectionCleanupThread` によってクラスローダーが作られる 
+      → close 処理が終わっても `AbandonedConnectionCleanupThread` からは参照し続けられるので GC されない
+      → 更に放置された Connection は増え続けるため、`AbandonedConnectionCleanupThread` によってクラスローダーは増え続けるが、GC はされない
+      → OOM という仮説がたつ
+※参考
+- [【クラスローダ】JVMが読み込むクラスを見つける仕組み【パッケージ】](https://norikone.hatenablog.com/entry/2018/07/04/%E3%80%90%E3%82%AF%E3%83%A9%E3%82%B9%E3%83%AD%E3%83%BC%E3%83%80%E3%80%91JVM%E3%81%8C%E8%AA%AD%E3%81%BF%E8%BE%BC%E3%82%80%E3%82%AF%E3%83%A9%E3%82%B9%E3%82%92%E8%A6%8B%E3%81%A4%E3%81%91%E3%82%8B)
+- [javaのクラスローダの仕組みについて](https://zudoh.com/java/research-java-class-loader)
