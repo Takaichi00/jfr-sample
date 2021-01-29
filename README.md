@@ -429,3 +429,48 @@ FullGC が発生している JMC と FullGC が発生しない場合は主に以
 ※参考
 - [【クラスローダ】JVMが読み込むクラスを見つける仕組み【パッケージ】](https://norikone.hatenablog.com/entry/2018/07/04/%E3%80%90%E3%82%AF%E3%83%A9%E3%82%B9%E3%83%AD%E3%83%BC%E3%83%80%E3%80%91JVM%E3%81%8C%E8%AA%AD%E3%81%BF%E8%BE%BC%E3%82%80%E3%82%AF%E3%83%A9%E3%82%B9%E3%82%92%E8%A6%8B%E3%81%A4%E3%81%91%E3%82%8B)
 - [javaのクラスローダの仕組みについて](https://zudoh.com/java/research-java-class-loader)
+
+## より詳細な heap 情報を取得したい
+- [JavaFlightRecorderでheapの使用状況を確認する](https://qiita.com/taniken5/items/e87549119059ea0835ac)
+- `${JAVA_HOME}/lib/jfr/myProfile.jfr` をコピーして `${JAVA_HOME}/lib/jfr/myProfile.jfr` を作成
+    - 以下のオプションが怪しそう
+```
+<event name="jdk.ObjectCount">
+  <setting name="enabled" control="memory-profiling-enabled-all">false</setting>
+  <setting name="period">everyChunk</setting>
+</event>
+
+<condition name="memory-profiling-enabled-medium" true="true" false="false">
+<or>
+  <test name="memory-profiling" operator="equal" value="medium"/>
+  <test name="memory-profiling" operator="equal" value="all"/>
+</or>
+</condition>
+
+<condition name="memory-profiling-enabled-all" true="true" false="false">
+    <test name="memory-profiling" operator="equal" value="all"/>
+</condition>
+
+ <selection name="memory-leak-detection" default="medium" label="Memory Leak Detection">
+    <option label="Off" name="off">off</option>
+    <option label="Object Types" name="minimal">minimal</option>
+    <option label="Object Types + Allocation Stack Traces" name="medium">medium</option>
+    <option label="Object Types + Allocation Stack Traces + Path to GC Root" name="full">full</option>
+  </selection>
+  <condition name="memory-leak-detection-enabled" true="false" false="true">
+      <test name="memory-leak-detection" operator="equal" value="off"/>
+  </condition>
+
+```
+
+- 実行するときは `settings=myProfile` を追加
+```
+java \
+-XX:StartFlightRecording=\
+dumponexit=true,\
+filename=./output/jdbc-bad-sample-non-FULLGC-Enable-heap.jfr,\
+disk=true,\
+path-to-gc-roots=true \
+settings=myProfile\
+-Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
+```
