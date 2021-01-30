@@ -432,8 +432,10 @@ FullGC が発生している JMC と FullGC が発生しない場合は主に以
 
 ## より詳細な heap 情報を取得したい
 - [JavaFlightRecorderでheapの使用状況を確認する](https://qiita.com/taniken5/items/e87549119059ea0835ac)
-- `${JAVA_HOME}/lib/jfr/myProfile.jfr` をコピーして `${JAVA_HOME}/lib/jfr/myProfile.jfr` を作成
+- `${JAVA_HOME}/lib/jfr/myProfile.jfc` をコピーして `${JAVA_HOME}/lib/jfr/myProfile.jfc` を作成
     - 以下のオプションが怪しそう
+- https://docs.oracle.com/javacomponents/jp/jmc-5-5/jfr-command-reference/diagnostic-command-reference.htm によれば、`default.jfc` の代わりに `profile.jfc` を指定しても詳細な情報が取れるよう
+    - ただし実行時のオーバーヘッドは大きくなる
 ```
 <event name="jdk.ObjectCount">
   <setting name="enabled" control="memory-profiling-enabled-all">false</setting>
@@ -463,14 +465,16 @@ FullGC が発生している JMC と FullGC が発生しない場合は主に以
 
 ```
 
-- 実行するときは `settings=myProfile` を追加
+- 実行するときは `settings=myProfile` を追加。まずは何も設定を変更せずに実行してみる
 ```
 java \
 -XX:StartFlightRecording=\
 dumponexit=true,\
-filename=./output/jdbc-bad-sample-non-FULLGC-Enable-heap.jfr,\
+filename=./output/jdbc-bad-sample-FULLGC-myProfile.jfr,\
 disk=true,\
-path-to-gc-roots=true \
-settings=myProfile\
+path-to-gc-roots=true,\
+settings=myProfile \
 -Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
 ```
+- すると `default.jfc` を指定したときより詳細な情報が取得できている
+![GC-NG](img/FullGC-myProfile.png)
