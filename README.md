@@ -478,3 +478,11 @@ settings=myProfile \
 ```
 - すると `default.jfc` を指定したときより詳細な情報が取得できている
 ![GC-NG](img/FullGC-myProfile.png)
+
+- 以下がスタックトレース
+    - スタックトレースを見ると、`void sun.security.ssl.Finished$T13FinishedConsumer.onConsumeFinished(ClientHandshakeContext, ByteBuffer)` とある
+    - 対象のソースコード(https://github.com/AdoptOpenJDK/openjdk-jdk11/blob/master/src/java.base/share/classes/sun/security/ssl/Finished.java#L528)を見てみると、Connection を終了する処理が記載されている
+    - よって、[MySQL Connector/J (JDBC ドライバ)の罠まとめ](https://saiya-moebius.hatenablog.com/entry/2014/08/20/230445) にあるように、`AbandonedConnectionCleanupThread` というスレッドが、放置されている connection を close しようとしているが、close されていない connection が多すぎてヒープを食い尽くしているように見える。
+        - → close されていない connection を保持するような実装になっているため?
+![GC-NG](img/FullGC-myProfile-stackTrace.png)
+
