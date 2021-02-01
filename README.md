@@ -486,3 +486,5 @@ settings=myProfile \
         - → close されていない connection を保持するような実装になっているため?
 ![GC-NG](img/FullGC-myProfile-stackTrace.png)
 
+- ちなみに MemoryCache (https://github.com/openjdk/jdk11u/blob/2b4cfd277663f68a8d3d0c120eaf7afc0d7613dc/src/java.base/share/classes/sun/security/util/Cache.java#L355) はパフォーマンスに改善の余地があり、Bug も切られている
+ - [JDK-8259886 : Improve SSL session cache performance and scalability](https://bugs.java.com/bugdatabase/view_bug.do?bug_id=8259886)
