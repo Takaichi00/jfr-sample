@@ -488,3 +488,63 @@ settings=myProfile \
 
 - ちなみに MemoryCache (https://github.com/openjdk/jdk11u/blob/2b4cfd277663f68a8d3d0c120eaf7afc0d7613dc/src/java.base/share/classes/sun/security/util/Cache.java#L355) はパフォーマンスに改善の余地があり、Bug も切られている
  - [JDK-8259886 : Improve SSL session cache performance and scalability](https://bugs.java.com/bugdatabase/view_bug.do?bug_id=8259886)
+
+- Connection を close するようにして再度取得してみる
+```
+java \
+-XX:StartFlightRecording=\
+dumponexit=true,\
+filename=./output/jdbc-bad-sample-non-FULLGC-myProfile.jfr,\
+disk=true,\
+path-to-gc-roots=true,\
+settings=myProfile \
+-Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
+```
+![GC-NG](img/non-FullGC-myProfile-stackTrace.png)
+- StackTrace は FULLGC が発生したときと共通しているが、ヒープのライブ・セット傾向の警告は出ていない
+- また、「スレッド」の `mysql-cj-abandoned-connection-cleanup` を見てみると、スタックトレースに違いがある
+
+■ FullGC
+```
+スタックトレース / カウント
+String jdk.internal.jimage.ImageStringsReader.stringFromByteBuffer(ByteBuffer)	9
+String jdk.internal.jimage.BasicImageReader.getString(int)	9
+String jdk.internal.jimage.ImageStringsReader.get(int)	9
+boolean jdk.internal.jimage.ImageLocation.verify(String, String, long[], ImageStrings)	9
+ImageLocation jdk.internal.jimage.BasicImageReader.findLocation(String, String)	9
+ImageLocation jdk.internal.jimage.ImageReader.findLocation(String, String)	9
+ImageLocation jdk.internal.module.SystemModuleFinders$SystemModuleReader.findImageLocation(String)	9
+Optional jdk.internal.module.SystemModuleFinders$SystemModuleReader.find(String)	9
+List jdk.internal.loader.BuiltinClassLoader$2.run()	9
+Object jdk.internal.loader.BuiltinClassLoader$2.run()	9
+Object java.security.AccessController.doPrivileged(PrivilegedExceptionAction)	9
+List jdk.internal.loader.BuiltinClassLoader.findMiscResource(String)	9
+URL jdk.internal.loader.BuiltinClassLoader.findResource(String)	9
+URL java.lang.ClassLoader.getResource(String)	7
+void com.mysql.cj.jdbc.AbandonedConnectionCleanupThread.checkThreadContextClassLoader()	5
+void com.mysql.cj.jdbc.AbandonedConnectionCleanupThread.run()	5
+void java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor$Worker)	5
+void java.util.concurrent.ThreadPoolExecutor$Worker.run()	5
+void java.lang.Thread.run()	5
+```
+
+■ non FullGC
+```
+スタックトレース / カウント
+void java.lang.Object.wait(long)	36
+Reference java.lang.ref.ReferenceQueue.remove(long)	36
+void com.mysql.cj.jdbc.AbandonedConnectionCleanupThread.run()	36
+void java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor$Worker)	36
+void java.util.concurrent.ThreadPoolExecutor$Worker.run()	36
+void java.lang.Thread.run()	36
+```
+
+→  `AbandonedConnectionCleanupThread.run()` 以降の処理が異なり、FullGC のほうが後続にクラスローディングなど実施しており、close 処理忘れが原因であることは推測できる。
+
+## Next Action
+- いまいち次のようなことが理解できていない
+    - 本当に 「`AbandonedConnectionCleanupThread` というスレッドが、放置されている connection を close しようとしているが、close されていない connection が多すぎてヒープを食い尽くしているように見える」というのは正しいのか?
+    - OOM が発生するということは、GC が発生しても解放されない=参照され続けているオブジェクトがあるということだが、それはどれか?
+- 以下のことを実施してみる
+    - Heap Dump の取得
+    - Thread Dump の取得

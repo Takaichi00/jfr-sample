@@ -54,8 +54,8 @@ public class Main {
         updateAttributes.add(new UpdateAttribute(rs1.getInt("id"), rs1.getString("name"), null));
       }
 
-//      stmt1.close();
-//      rs1.close();
+      stmt1.close();
+      rs1.close();
 
       for (UpdateAttribute updateAttribute : updateAttributes) {
         String sql2 = "SELECT name,address FROM TABLE_B WHERE name='" + updateAttribute.getName() + "'";
@@ -71,14 +71,14 @@ public class Main {
             // Do something
             updateAttribute.setAddress(rs3.getString("address"));
           }
-//          stmt3.close();
-//          rs3.close();
+          stmt3.close();
+          rs3.close();
         }
 
         System.out.println("now:" + updateAttribute.getId());
 
-//        stmt2.close();
-//        rs2.close();
+        stmt2.close();
+        rs2.close();
       }
 
       printAllInformation(updateAttributes);
