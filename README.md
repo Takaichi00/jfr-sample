@@ -477,14 +477,14 @@ settings=myProfile \
 -Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
 ```
 - すると `default.jfc` を指定したときより詳細な情報が取得できている
-![GC-NG](img/FullGC-myProfile.png)
+![Full-myProfile](img/FullGC-myProfile.png)
 
 - 以下がスタックトレース
     - スタックトレースを見ると、`void sun.security.ssl.Finished$T13FinishedConsumer.onConsumeFinished(ClientHandshakeContext, ByteBuffer)` とある
     - 対象のソースコード(https://github.com/AdoptOpenJDK/openjdk-jdk11/blob/master/src/java.base/share/classes/sun/security/ssl/Finished.java#L528)を見てみると、Connection を終了する処理が記載されている
     - よって、[MySQL Connector/J (JDBC ドライバ)の罠まとめ](https://saiya-moebius.hatenablog.com/entry/2014/08/20/230445) にあるように、`AbandonedConnectionCleanupThread` というスレッドが、放置されている connection を close しようとしているが、close されていない connection が多すぎてヒープを食い尽くしているように見える。
         - → close されていない connection を保持するような実装になっているため?
-![GC-NG](img/FullGC-myProfile-stackTrace.png)
+![Full-stack](img/FullGC-myProfile-stackTrace.png)
 
 - ちなみに MemoryCache (https://github.com/openjdk/jdk11u/blob/2b4cfd277663f68a8d3d0c120eaf7afc0d7613dc/src/java.base/share/classes/sun/security/util/Cache.java#L355) はパフォーマンスに改善の余地があり、Bug も切られている
  - [JDK-8259886 : Improve SSL session cache performance and scalability](https://bugs.java.com/bugdatabase/view_bug.do?bug_id=8259886)
@@ -500,7 +500,7 @@ path-to-gc-roots=true,\
 settings=myProfile \
 -Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
 ```
-![GC-NG](img/non-FullGC-myProfile-stackTrace.png)
+![nonFull-stack](img/non-FullGC-myProfile-stackTrace.png)
 - StackTrace は FULLGC が発生したときと共通しているが、ヒープのライブ・セット傾向の警告は出ていない
 - また、「スレッド」の `mysql-cj-abandoned-connection-cleanup` を見てみると、スタックトレースに違いがある
 
@@ -548,3 +548,17 @@ void java.lang.Thread.run()	36
 - 以下のことを実施してみる
     - Heap Dump の取得
     - Thread Dump の取得
+
+## Heap Dump を取得する
+- heap dump の取得方法は複数あるが、OOM 発生時に heap dump を生成してくれる `-XX:+HeapDumpOnOutOfMemoryError` をつけて実行してみる
+```
+java \
+-XX:+HeapDumpOnOutOfMemoryError \
+-XX:HeapDumpPath=./output \
+-Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
+```
+- 作成された `.hprof` ファイルを作成するには、`jhat` コマンドを利用する [jhat - Java ヒープ解析ツール](https://docs.oracle.com/javase/jp/7/technotes/tools/share/jhat.html)
+    - と思ったが、`jhat` は Java9 で削除されたらしい (https://builder.japan.zdnet.com/sp_oracle/35095997/2/)
+- [Memory Analyzer](http://www.eclipse.org/mat/) を使って解析を実施する
+    - 「File」→ から対象の `.hprof` ファイルを開くと、以下のような画面が確認できた
+![Memory Analyzer-top](img/memory-analyzer.png)
