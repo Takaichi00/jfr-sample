@@ -570,3 +570,6 @@ java \
 ![Memory Analyzer histogram](img/memory-analyzer-histogram.png)
 - `java.lang.Object`, `CopyOnWriteArrayList` の下に `com.mysql.cj.jdbc.ConnectionImpl`, `com.mysql.cj.jdbc.ClientPreparedStatement`, `com.mysql.cj.jdbc.result.ResultSetImpl` が続く
     - ここから MySQL の Connection 周りで大きく heap を使っていることがわかる
+
+#### 参考文献
+- [JVM上で動くWebアプリケーションがリソースを食いつぶす原因を探るためにやったこと【Backlog Play化プロジェクト】](https://backlog.com/ja/blog/java-virtual-machine-system-performance-survey/)
