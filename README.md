@@ -562,3 +562,11 @@ java \
 - [Memory Analyzer](http://www.eclipse.org/mat/) を使って解析を実施する
     - 「File」→ から対象の `.hprof` ファイルを開くと、以下のような画面が確認できた
 ![Memory Analyzer-top](img/memory-analyzer.png)
+
+### 考察
+- この heap dump が取られているのは OOM 発生時なので、9.3MB となっているものが原因と推測できる。
+    - 円グラフの 9.3MB をクリックすると、`com.mysql.cj.jdbc.ConnectionImpl` との記載がある。やはり mysql の接続処理に問題がありそう
+- "Histogram" を選択し、"Retained Heap" が多い順に並び替えると以下のような結果になった。
+![Memory Analyzer histogram](img/memory-analyzer-histogram.png)
+- `java.lang.Object`, `CopyOnWriteArrayList` の下に `com.mysql.cj.jdbc.ConnectionImpl`, `com.mysql.cj.jdbc.ClientPreparedStatement`, `com.mysql.cj.jdbc.result.ResultSetImpl` が続く
+    - ここから MySQL の Connection 周りで大きく heap を使っていることがわかる
