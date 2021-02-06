@@ -615,3 +615,5 @@ jvisualvm
 ### 参考文献
 - [スレッド ダンプ](https://docs.oracle.com/cd/F25597_01/document/products/jrockit/geninfo/diagnos/using_threaddumps.html)
 - [What is Thread Dump and How to Analyze them?](https://geekflare.com/generate-analyze-thread-dumps/)
+- [Java VisualVM - アプリケーションスレッドの監視](https://docs.oracle.com/javase/jp/7/technotes/guides/visualvm/threads.html)
+- [How to Analyze Java Thread Dumps](https://dzone.com/articles/how-analyze-java-thread-dumps)
