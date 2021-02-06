@@ -1,0 +1,149 @@
+Thread 0x7fecdab60
+
+  locals:
+
+Thread 0x7ff49e7a8
+
+  locals:
+
+Thread 0x7fecdb8b8
+  at java.lang.OutOfMemoryError.<init>()V (OutOfMemoryError.java:48)
+  at sun.util.calendar.Gregorian.newCalendarDate(Ljava/util/TimeZone;)Lsun/util/calendar/Gregorian$Date; (Gregorian.java:85)
+  at java.util.GregorianCalendar.<init>(Ljava/util/TimeZone;Ljava/util/Locale;Z)V (GregorianCalendar.java:739)
+  at java.util.Calendar$Builder.build()Ljava/util/Calendar; (Calendar.java:1493)
+  at sun.util.locale.provider.CalendarProviderImpl.getInstance(Ljava/util/TimeZone;Ljava/util/Locale;)Ljava/util/Calendar; (CalendarProviderImpl.java:87)
+  at java.util.Calendar.createCalendar(Ljava/util/TimeZone;Ljava/util/Locale;)Ljava/util/Calendar; (Calendar.java:1696)
+  at java.util.Calendar.getInstance(Ljava/util/TimeZone;Ljava/util/Locale;)Ljava/util/Calendar; (Calendar.java:1675)
+  at com.mysql.cj.result.SqlTimeValueFactory.<init>(Lcom/mysql/cj/conf/PropertySet;Ljava/util/Calendar;Ljava/util/TimeZone;)V (SqlTimeValueFactory.java:62)
+  at com.mysql.cj.result.SqlTimeValueFactory.<init>(Lcom/mysql/cj/conf/PropertySet;Ljava/util/Calendar;Ljava/util/TimeZone;Lcom/mysql/cj/WarningListener;)V (SqlTimeValueFactory.java:68)
+  at com.mysql.cj.jdbc.result.ResultSetImpl.<init>(Lcom/mysql/cj/protocol/ResultsetRows;Lcom/mysql/cj/jdbc/JdbcConnection;Lcom/mysql/cj/jdbc/StatementImpl;)V (ResultSetImpl.java:270)
+  at com.mysql.cj.jdbc.result.ResultSetFactory.createFromResultsetRows(IILcom/mysql/cj/protocol/ResultsetRows;)Lcom/mysql/cj/jdbc/result/ResultSetImpl; (ResultSetFactory.java:135)
+  at com.mysql.cj.jdbc.result.ResultSetFactory.createFromProtocolEntity(Lcom/mysql/cj/protocol/ProtocolEntity;)Lcom/mysql/cj/jdbc/result/ResultSetImpl; (ResultSetFactory.java:95)
+  at com.mysql.cj.jdbc.result.ResultSetFactory.createFromProtocolEntity(Lcom/mysql/cj/protocol/ProtocolEntity;)Ljava/lang/Object; (ResultSetFactory.java:48)
+  at com.mysql.cj.protocol.a.TextResultsetReader.read(IZLcom/mysql/cj/protocol/a/NativePacketPayload;Lcom/mysql/cj/protocol/ColumnDefinition;Lcom/mysql/cj/protocol/ProtocolEntityFactory;)Lcom/mysql/cj/protocol/Resultset; (TextResultsetReader.java:100)
+  at com.mysql.cj.protocol.a.TextResultsetReader.read(IZLcom/mysql/cj/protocol/Message;Lcom/mysql/cj/protocol/ColumnDefinition;Lcom/mysql/cj/protocol/ProtocolEntityFactory;)Lcom/mysql/cj/protocol/ProtocolEntity; (TextResultsetReader.java:48)
+  at com.mysql.cj.protocol.a.NativeProtocol.read(Ljava/lang/Class;IZLcom/mysql/cj/protocol/a/NativePacketPayload;ZLcom/mysql/cj/protocol/ColumnDefinition;Lcom/mysql/cj/protocol/ProtocolEntityFactory;)Lcom/mysql/cj/protocol/ProtocolEntity; (NativeProtocol.java:1590)
+  at com.mysql.cj.protocol.a.NativeProtocol.readAllResults(IZLcom/mysql/cj/protocol/a/NativePacketPayload;ZLcom/mysql/cj/protocol/ColumnDefinition;Lcom/mysql/cj/protocol/ProtocolEntityFactory;)Lcom/mysql/cj/protocol/Resultset; (NativeProtocol.java:1644)
+  at com.mysql.cj.protocol.a.NativeProtocol.sendQueryPacket(Lcom/mysql/cj/Query;Lcom/mysql/cj/protocol/a/NativePacketPayload;IZLcom/mysql/cj/protocol/ColumnDefinition;Lcom/mysql/cj/protocol/ProtocolEntityFactory;)Lcom/mysql/cj/protocol/Resultset; (NativeProtocol.java:953)
+  at com.mysql.cj.protocol.a.NativeProtocol.sendQueryString(Lcom/mysql/cj/Query;Ljava/lang/String;Ljava/lang/String;IZLcom/mysql/cj/protocol/ColumnDefinition;Lcom/mysql/cj/protocol/ProtocolEntityFactory;)Lcom/mysql/cj/protocol/Resultset; (NativeProtocol.java:886)
+  at com.mysql.cj.NativeSession.execSQL(Lcom/mysql/cj/Query;Ljava/lang/String;ILcom/mysql/cj/protocol/a/NativePacketPayload;ZLcom/mysql/cj/protocol/ProtocolEntityFactory;Lcom/mysql/cj/protocol/ColumnDefinition;Z)Lcom/mysql/cj/protocol/Resultset; (NativeSession.java:1073)
+  at com.mysql.cj.jdbc.StatementImpl.executeQuery(Ljava/lang/String;)Ljava/sql/ResultSet; (StatementImpl.java:1168)
+  at com.takaichi00.sample.badjdbcconnection.Main.main([Ljava/lang/String;)V (Main.java:69)
+
+  locals:
+    objectId=0x7ff1a9540, line=1
+    objectId=0x7fff6d560, line=2
+    objectId=0x7fff6d528, line=3
+    objectId=0x7fff6d560, line=3
+    objectId=0x7ff1a9540, line=5
+    objectId=0x7fecf8f30, line=5
+    objectId=0x7fff6d508, line=7
+    objectId=0x7fff6d508, line=7
+    objectId=0x7fff6d508, line=8
+    objectId=0x7fff6d358, line=8
+    objectId=0x7fff6d358, line=9
+    objectId=0x7fff6d330, line=9
+    objectId=0x7fed81748, line=9
+    objectId=0x7fff6d358, line=9
+    objectId=0x7fff6d508, line=9
+    objectId=0x7fff6d330, line=10
+    objectId=0x7fff69ee8, line=10
+    objectId=0x7fff6d358, line=10
+    objectId=0x7fed81800, line=16
+    objectId=0x7fff6a168, line=16
+    objectId=0x7fed81800, line=17
+    objectId=0x7fff69ee8, line=17
+    objectId=0x7fff6a198, line=17
+    objectId=0x7fff6ca38, line=17
+    objectId=0x7fff6cb28, line=17
+    objectId=0x7fed81960, line=19
+    objectId=0x7fff69ed0, line=19
+    objectId=0x7fff69ee8, line=20
+    objectId=0x7fff69ed0, line=20
+    objectId=0x7feda3498, line=20
+    objectId=0x7feda3498, line=20
+    objectId=0x7fff69ee8, line=20
+    objectId=0x7fedec320, line=21
+    objectId=0x7ff1a88b0, line=21
+    objectId=0x7feda3498, line=21
+    objectId=0x7ff1a88c8, line=21
+    objectId=0x7ff1a88e0, line=21
+    objectId=0x7ff382340, line=21
+    objectId=0x7ff382410, line=21
+    objectId=0x7ff253918, line=21
+    objectId=0x7fff691d8, line=21
+    objectId=0x7fff691f0, line=21
+    objectId=0x7fff698a8, line=21
+    objectId=0x7fff69ed0, line=21
+    objectId=0x7fff69ee8, line=21
+
+Thread 0x7fecdb128
+  at java.lang.Object.wait(J)V (Native Method)
+  at java.lang.ref.ReferenceQueue.remove(J)Ljava/lang/ref/Reference; (ReferenceQueue.java:155)
+  at jdk.internal.ref.CleanerImpl.run()V (CleanerImpl.java:148)
+  at java.lang.Thread.run()V (Thread.java:834)
+  at jdk.internal.misc.InnocuousThread.run()V (InnocuousThread.java:134)
+
+  locals:
+    objectId=0x7fec47cf8, line=1
+    objectId=0x7fec47d18, line=1
+    objectId=0x7fec47d90, line=2
+    objectId=0x7fecdb128, line=2
+    objectId=0x7fecdb128, line=2
+    objectId=0x7fecdb128, line=3
+    objectId=0x7fecdb128, line=4
+
+Thread 0x7fecdad50
+  at java.lang.Object.wait(J)V (Native Method)
+  at java.lang.ref.ReferenceQueue.remove(J)Ljava/lang/ref/Reference; (ReferenceQueue.java:155)
+  at java.lang.ref.ReferenceQueue.remove()Ljava/lang/ref/Reference; (ReferenceQueue.java:176)
+  at java.lang.ref.Finalizer$FinalizerThread.run()V (Finalizer.java:170)
+
+  locals:
+    objectId=0x7fedec4d0, line=1
+    objectId=0x7fedec4c0, line=1
+    objectId=0x7fedec4d0, line=2
+    objectId=0x7fecdad50, line=3
+    objectId=0x7fedec4f0, line=3
+
+Thread 0x7fecda968
+  at java.lang.Thread.sleep(J)V (Native Method)
+  at org.graalvm.compiler.hotspot.management.SVMMBean$Factory.run()V (SVMMBean.java:569)
+
+  locals:
+    objectId=0x7fecda968, line=1
+    objectId=0x7fecda968, line=1
+
+Thread 0x7fedec550
+
+  locals:
+    objectId=0x7fedec500, line=-1
+    objectId=0x7fedec528, line=-1
+
+Thread 0x7fecdaf08
+  at java.lang.ref.Reference.waitForReferencePendingList()V (Native Method)
+  at java.lang.ref.Reference.processPendingReferences()V (Reference.java:241)
+  at java.lang.ref.Reference$ReferenceHandler.run()V (Reference.java:213)
+
+  locals:
+    objectId=0x7fecdaf08, line=2
+
+Thread 0x7fecdb3c0
+  at java.lang.Object.wait(J)V (Native Method)
+  at java.lang.ref.ReferenceQueue.remove(J)Ljava/lang/ref/Reference; (ReferenceQueue.java:155)
+  at com.mysql.cj.jdbc.AbandonedConnectionCleanupThread.run()V (AbandonedConnectionCleanupThread.java:85)
+  at java.util.concurrent.ThreadPoolExecutor.runWorker(Ljava/util/concurrent/ThreadPoolExecutor$Worker;)V (ThreadPoolExecutor.java:1128)
+  at java.util.concurrent.ThreadPoolExecutor$Worker.run()V (ThreadPoolExecutor.java:628)
+  at java.lang.Thread.run()V (Thread.java:834)
+
+  locals:
+    objectId=0x7fedec9e0, line=1
+    objectId=0x7fedec9d0, line=1
+    objectId=0x7fedeca88, line=2
+    objectId=0x7fecdb5b8, line=3
+    objectId=0x7fecdb588, line=3
+    objectId=0x7fecdb3c0, line=3
+    objectId=0x7fedeca88, line=3
+    objectId=0x7fecdb588, line=4
+    objectId=0x7fecdb3c0, line=5
+
