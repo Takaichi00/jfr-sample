@@ -617,3 +617,4 @@ jvisualvm
 - [What is Thread Dump and How to Analyze them?](https://geekflare.com/generate-analyze-thread-dumps/)
 - [Java VisualVM - アプリケーションスレッドの監視](https://docs.oracle.com/javase/jp/7/technotes/guides/visualvm/threads.html)
 - [How to Analyze Java Thread Dumps](https://dzone.com/articles/how-analyze-java-thread-dumps)
+- [8.11.5.1 MySQL のクライアント接続のためのスレッドの使用方法](https://dev.mysql.com/doc/refman/5.6/ja/connection-threads.html)
