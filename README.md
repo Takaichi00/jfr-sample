@@ -603,7 +603,7 @@ jstack -e <PID> > ./output/threaddump-fullgc-detail.txt
 - `jstack -e` オプションを付けても中身は変わらなかった
 - thread dump を見ると、たしかに main thread の他に、mysql-cj-abandoned-connection-cleanup というのがあるが、それ以上の情報は得られない
 - よく見ると、heap dump を取得し、Eclipse Memory Analyzer で .hprof ファイルを開いた際、java_pid34777.threads というファイルが作成されていた
-    - これをみると、OOM の原因となった Thread は main Thread であり、main Thread の local variable が増え続けて OOM になっている用に見える 
+    - これをみると、OOM の原因となった Thread は main Thread であり、main Thread の local variable が増え続けて OOM になっているように見える 
 - main Thread にて Connection が閉じられない → mysql-cj-abandoned-connection-cleanup Thread が close 処理をする → しかし close 処理をしたオブジェクトは GC の対象にならない (mysql-cj-abandoned-connection-cleanup Thread から参照され続けている) → main Thread の local variable に connection のオブジェクトが増え続ける → OOM
     - まだ確証は無い
     - TODO → mysql-cj-abandoned-connection-cleanup Thread の dump を継続的に取得してみる
@@ -612,9 +612,21 @@ jstack -e <PID> > ./output/threaddump-fullgc-detail.txt
 ```
 jvisualvm
 ```
+
+- アプリケーションの起動
+```
+java -Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
+```
+
+- Visual VM から Local > jdbc-bad-sample.jar を右クリック > open で以下のようなが面が出力された
+![visual-vm-fullgc](img/visual-vm-fullgc.png)
+- これを見ると、mysql-cj-abandoned-connection-cleanup Thread は実行されていないことがわかる
+    - よって、OOM が発生するのは単純に connection が close されずに local 変数が増え続けてしまうことが原因だったと言える
+
 ### 参考文献
 - [スレッド ダンプ](https://docs.oracle.com/cd/F25597_01/document/products/jrockit/geninfo/diagnos/using_threaddumps.html)
 - [What is Thread Dump and How to Analyze them?](https://geekflare.com/generate-analyze-thread-dumps/)
 - [Java VisualVM - アプリケーションスレッドの監視](https://docs.oracle.com/javase/jp/7/technotes/guides/visualvm/threads.html)
 - [How to Analyze Java Thread Dumps](https://dzone.com/articles/how-analyze-java-thread-dumps)
 - [8.11.5.1 MySQL のクライアント接続のためのスレッドの使用方法](https://dev.mysql.com/doc/refman/5.6/ja/connection-threads.html)
+- [Java VisualVMの紹介](https://docs.oracle.com/javase/jp/8/docs/technotes/guides/visualvm/intro.html)
