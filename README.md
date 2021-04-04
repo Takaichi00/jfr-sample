@@ -23,7 +23,9 @@ mvn clean package -DskipTests=true
 java -jar target/quarkus-sample-0.0.1-SNAPSHOT-runner.jar -XX:StartFlightRecording
 ```
 - `jmc` コマンドを実行しようとしたが、`$JAVA_HOME` に jmc コマンドがない
-    - [1.4 JFRの動作環境とJMCのインストール](https://koduki.github.io/docs/book-introduction-of-jfr/site/01/04-install_jmc.html)を参考に、docker で起動してみる
+  - どうやらデフォルトのコマンドではなくなったよう。https://stackoverflow.com/questions/53882496/openjdk-jdk11-not-having-jmc-java-mission-controller-flightrecorder
+    - ~~[1.4 JFRの動作環境とJMCのインストール](https://koduki.github.io/docs/book-introduction-of-jfr/site/01/04-install_jmc.html)を参考に、docker で起動してみる~~
+      - この方法もうまくいかなかった。以下実行履歴。
 ```
 git clone https://github.com/openjdk/jmc.git
 cd jmc
