@@ -570,7 +570,7 @@ java \
 ![Memory Analyzer histogram](img/memory-analyzer-histogram.png)
 - `java.lang.Object`, `CopyOnWriteArrayList` の下に `com.mysql.cj.jdbc.ConnectionImpl`, `com.mysql.cj.jdbc.ClientPreparedStatement`, `com.mysql.cj.jdbc.result.ResultSetImpl` が続く
     - ここから MySQL の Connection 周りで大きく heap を使っていることがわかる
-- 一番 heap を使っている `java.lang.Object` の "Merge Shortest Path to GC Routes" を開くと、圧倒的に main thread の heap が多いことがわかる
+- 一番 heap を使っている `java.lang.Object` の "Merge Shortest Path to GC Roots" を開くと、圧倒的に main thread の heap が多いことがわかる
 ![merge-shortest-object](img/merge-shortest-object.png) 
 - expand していくと、`ConnectionImpl` の `ResultsetRowsStatic` を含む `ClientPreparedStatement` が大量に ArrayList として生成されていることがわかる
     - よって Resultset / PreparedStatement が大量に生成 → close 忘れが発生していると推測できる 
