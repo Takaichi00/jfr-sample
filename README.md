@@ -565,6 +565,13 @@ java \
     - 「File」→ から対象の `.hprof` ファイルを開くと、以下のような画面が確認できた
 ![Memory Analyzer-top](img/memory-analyzer.png)
 
+### その他ヒープダンプの取得方法
+```
+$ jcmd `jps -v | grep jdbc-bad-sample | awk '{print $1}'` GC.heap_dump ./output/non-fullgc.hprof
+
+$ jmap -dump:live,file=output/non-fullgc.hprof `jps -v | grep jdbc-bad-sample | awk '{print $1}'`
+```
+
 ### 考察
 - この heap dump が取られているのは OOM 発生時なので、9.3MB となっているものが原因と推測できる。
     - 円グラフの 9.3MB をクリックすると、`com.mysql.cj.jdbc.ConnectionImpl` との記載がある。やはり mysql の接続処理に問題がありそう
@@ -632,3 +639,4 @@ java -Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
 - [How to Analyze Java Thread Dumps](https://dzone.com/articles/how-analyze-java-thread-dumps)
 - [8.11.5.1 MySQL のクライアント接続のためのスレッドの使用方法](https://dev.mysql.com/doc/refman/5.6/ja/connection-threads.html)
 - [Java VisualVMの紹介](https://docs.oracle.com/javase/jp/8/docs/technotes/guides/visualvm/intro.html)
+- [Kubernetes 上で JFR を利用するときの構成](https://speakerdeck.com/hhiroshell/jvm-on-kubernetes?slide=58)
