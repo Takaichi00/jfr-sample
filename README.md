@@ -394,6 +394,13 @@ disk=true,\
 path-to-gc-roots=true \
 -Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
 ```
+- もしくは `jcmd` コマンドを利用する
+```
+java -XX:StartFlightRecording -Xms20M -Xmx20M -jar ./target/jdbc-bad-sample-FULLGC.jfr
+
+jcmd pid JFR.dump filename=recording.jfr path-to-gc-roots=true
+```
+
 ![fullgc-heap-live-set](img/fullgc-heap-live-set.png)
 - すると、「ヒープのライブ・セット傾向」が出力され、2つのリーク候補を特定できた。
 - 内容を確認すると、`AbandonedConnectionCleanupThread` というクラスがヒープを食っているよう
