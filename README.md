@@ -1,20 +1,5 @@
 # jfr-sample
 
-## 参考文献
-- [サンプルプログラムはこちらのリポジトリを参考](https://github.com/Takaichi00/jdbc-bad-sample)
-- [最初の1リクエスト目で何をしているのか？](https://b.chiroito.dev/entry/2020/09/20/212719)
-- [Java Flight Recorderでトラブルシューティング](https://qiita.com/sahn/items/952f8c1fdc463fa372b4)
-- [JDBC & JFR Sample](https://github.com/chiroito/Jfr4Jdbc)
-- [Quarkus で JFR Event Streaming](https://b.chiroito.dev/entry/2020/05/28/185832)
-- [JITとコードの暖気の実体](https://b.chiroito.dev/entry/2020/09/18/221458)
-- [Rediness Probeでアプリケーションが十分にJITされたことを検知する](https://b.chiroito.dev/entry/2020/09/19/225533)
-- [Java Mission Control の紹介 (JMC)](https://docs.oracle.com/javase/jp/7/technotes/guides/jmc/intro.html)
-- [パフォーマンスのトラブルシュート入門](https://speakerdeck.com/chiroito/getting-started-performance-troubleshoot)
-- [Java 11のFlight Recorderを試す](https://matsumana.info/blog/2018/10/16/jdk11-flight-recorder/)
-- [JFR に関する情報がまとまった gitbook ページ](https://koduki.github.io/docs/book-introduction-of-jfr/site/)
-    - [1.2 Javaにおけるパフォーマンス分析と障害診断](https://koduki.github.io/docs/book-introduction-of-jfr/site/01/02-other_tools.html)
-        - こちらは JFR に限らず Java におけるいろいろなツール (jps, jstack, etc...)が紹介されている
-
 ## 実行メモ
 - 実行時に `-XX:StartFlightRecording` をつける
     - [Java 11のFlight Recorderを試す](https://matsumana.info/blog/2018/10/16/jdk11-flight-recorder/)
@@ -399,6 +384,9 @@ path-to-gc-roots=true \
 java -XX:StartFlightRecording -Xms20M -Xmx20M -jar ./target/jdbc-bad-sample-FULLGC.jfr
 
 jcmd pid JFR.dump filename=recording.jfr path-to-gc-roots=true
+
+# 例
+jcmd `jps -v | grep jdbc-bad-sample | awk '{print $1}'` JFR.dump filename=recording.jfr path-to-gc-roots=true
 ```
 
 ![fullgc-heap-live-set](img/fullgc-heap-live-set.png)
@@ -639,7 +627,8 @@ java -Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
 - これを見ると、mysql-cj-abandoned-connection-cleanup Thread は実行されていないことがわかる
     - よって、OOM が発生するのは単純に connection が close されずに local 変数が増え続けてしまうことが原因だったと言える
 
-### 参考文献
+# 参考文献
+- [サンプルプログラムはこちらのリポジトリを参考](https://github.com/Takaichi00/jdbc-bad-sample)
 - [スレッド ダンプ](https://docs.oracle.com/cd/F25597_01/document/products/jrockit/geninfo/diagnos/using_threaddumps.html)
 - [What is Thread Dump and How to Analyze them?](https://geekflare.com/generate-analyze-thread-dumps/)
 - [Java VisualVM - アプリケーションスレッドの監視](https://docs.oracle.com/javase/jp/7/technotes/guides/visualvm/threads.html)
@@ -647,3 +636,15 @@ java -Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
 - [8.11.5.1 MySQL のクライアント接続のためのスレッドの使用方法](https://dev.mysql.com/doc/refman/5.6/ja/connection-threads.html)
 - [Java VisualVMの紹介](https://docs.oracle.com/javase/jp/8/docs/technotes/guides/visualvm/intro.html)
 - [Kubernetes 上で JFR を利用するときの構成](https://speakerdeck.com/hhiroshell/jvm-on-kubernetes?slide=58)
+- [最初の1リクエスト目で何をしているのか？](https://b.chiroito.dev/entry/2020/09/20/212719)
+- [Java Flight Recorderでトラブルシューティング](https://qiita.com/sahn/items/952f8c1fdc463fa372b4)
+- [JDBC & JFR Sample](https://github.com/chiroito/Jfr4Jdbc)
+- [Quarkus で JFR Event Streaming](https://b.chiroito.dev/entry/2020/05/28/185832)
+- [JITとコードの暖気の実体](https://b.chiroito.dev/entry/2020/09/18/221458)
+- [Rediness Probeでアプリケーションが十分にJITされたことを検知する](https://b.chiroito.dev/entry/2020/09/19/225533)
+- [Java Mission Control の紹介 (JMC)](https://docs.oracle.com/javase/jp/7/technotes/guides/jmc/intro.html)
+- [パフォーマンスのトラブルシュート入門](https://speakerdeck.com/chiroito/getting-started-performance-troubleshoot)
+- [Java 11のFlight Recorderを試す](https://matsumana.info/blog/2018/10/16/jdk11-flight-recorder/)
+- [JFR に関する情報がまとまった gitbook ページ](https://koduki.github.io/docs/book-introduction-of-jfr/site/)
+    - [1.2 Javaにおけるパフォーマンス分析と障害診断](https://koduki.github.io/docs/book-introduction-of-jfr/site/01/02-other_tools.html)
+        - こちらは JFR に限らず Java におけるいろいろなツール (jps, jstack, etc...)が紹介されている
