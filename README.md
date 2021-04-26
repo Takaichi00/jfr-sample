@@ -1,4 +1,4 @@
-# JFR (JDK Flight Recorder) Sample
+# JFR (JDK Flight Recorder) の解析
 
 * アプリケーションをビルド
 
@@ -69,3 +69,39 @@ filename=./output/jdbc-bad-sample-FULLGC.jfr,\
 ![non-FULLGC](./img/non-FULLGC-jfr.png)
 
 ![FULLGC](./img/FULLGC-jfr.png)
+
+# Heap Dump の取得
+
+## OOME 発生時に Heap Dump を取得する
+
+* 以下のコマンドを実行すると、OOME 発生時に .hprof ファイルが作成される
+
+```
+java \
+-XX:+HeapDumpOnOutOfMemoryError \
+-XX:HeapDumpPath=./output \
+-Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
+```
+
+## リアルタイムで Heap Dump を取得
+
+```
+# ヒープダンプの生成前に FullGC を実施
+jmap -dump:live,file=<FILE_PATH> <JAVA_PID>
+
+# 以下のコマンドでも ヒープダンプを取得可能
+jcmd <JAVA_PID> GC.heap_dump <FILE_PATH>
+```
+
+* 実行例
+
+```
+jcmd `jps -v | grep jdbc-bad-sample | awk '{print $1}'` GC.heap_dump ./output/
+```
+
+
+
+## Memory Analyzer での解析
+
+* 作成された .hprof ファイルは Memory Analyzer で解析可能
+  * http://www.eclipse.org/mat/ からダウンロード可能
