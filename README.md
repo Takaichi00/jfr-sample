@@ -1,5 +1,10 @@
-# JFR (JDK Flight Recorder) の解析
+# はじめに
+- JJUG CCC 2021 Spring で発表した [JFR などのツールを用いて FullGC や OOME の原因を特定する流れ](https://fortee.jp/jjug-ccc-2021-spring/proposal/83439492-e768-427e-b5ca-a1f6bd20aa4b) のサンプルコードです。
+    - 発表資料: https://speakerdeck.com/takaichi00/jjug-ccc-2021-spring-resolving-oome-with-jfr
+    - 発表動画: https://www.youtube.com/watch?v=QlyixJVFhzA&list=PLy44EKO1L0eKJ_gTREaeZhqGp2Giey1Sl&index=22
 
+# JFR (JDK Flight Recorder) の解析
+## 事前準備
 * アプリケーションをビルド
 
 ```
@@ -47,8 +52,10 @@ mysql> load data local infile "~/ideaProjects/jfr-sample/jdbc-bad-sample/src/mai
 mysql> load data local infile "~/ideaProjects/jfr-sample/jdbc-bad-sample/src/main/resources/insert_tableB.csv" into table TABLE_B fields terminated by ',' optionally enclosed by '"';
 ```
 
-* 以下のコマンドを実行してアプリーケーションを起動
 
+## JFR を有効にしてアプリケーションを起動
+
+* 以下のコマンドを実行してアプリーケーションを起動
 ```
 java \
 -XX:StartFlightRecording=\ # JFR を有効にする
@@ -59,6 +66,8 @@ filename=./output/jdbc-bad-sample-FULLGC.jfr,\
 
 * しばらくすると、`Exception in thread "main" java.lang.OutOfMemoryError: Java heap space` が表示される
 
+
+## JMC で解析
 * JMC (JDK Mission Control) のダウンロード
   * Oracle: (https://www.oracle.com/java/technologies/javase/products-jmc8-downloads.html)
   * AdoptOpenJDK: (https://adoptopenjdk.net/jmc.html)
@@ -69,6 +78,32 @@ filename=./output/jdbc-bad-sample-FULLGC.jfr,\
 ![non-FULLGC](./img/non-FULLGC-jfr.png)
 
 ![FULLGC](./img/FULLGC-jfr.png)
+
+## JFR でより詳細な情報を取得する
+※ 詳細な情報を取得する際は、JFR のオーバーヘッドも大きくなり性能劣化が発生するため、パフォーマンスに影響がでてはいけない環境での実行は控える
+
+- ヒープに関する詳細情報を取得したい場合
+```
+java \
+-XX:StartFlightRecording=\ # JFR を有効にする
+dumponexit=true,\  # JVM プロセスがシャットダウンした時にファイルにダンプする
+filename=./output/jdbc-bad-sample-FULLGC.jfr,\
+path-to-gc-roots=true \ # ヒープ統計を有効にする。実行の開始時と終了時に Old ガベージ・コレクションがトリガーされる。
+-Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
+```
+
+- JFR でより詳細な情報を取得したい場合
+    - 例えば先程指定した `path-to-gc-roots` オプションは、profile.jfc を指定すると、リークの可能性があるオブジェクトに対して、割り当てられている場所からのスタックトレースを確認することができる
+```
+java \
+-XX:StartFlightRecording=\
+dumponexit=true,\
+filename=./output/jdbc-bad-sample-FULLGC-profile.jfr,\
+disk=true,\
+path-to-gc-roots=true,\
+settings=profile \ # より詳細な情報を取得する Profile を指定
+-Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
+```
 
 # Heap Dump の取得
 
