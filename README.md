@@ -31,7 +31,7 @@ mvn flyway:clean flyway:migrate
 
 ```
 # https://mita2db.hateblo.jp/entry/2020/01/13/163218
-mysql -u root -h 127.0.0.1 -P 13306 -p -D test_database --local-infile=1
+mysql -u root -h 127.0.0.1 -P 13306 -proot -D test_database --local-infile=1
 
 # ideaProjects ディレクトリに clone した場合
 mysql> SET GLOBAL local_infile=on;
