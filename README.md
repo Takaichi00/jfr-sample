@@ -44,11 +44,7 @@ mysql> load data local infile "~/ideaProjects/jfr-sample/jdbc-bad-sample/src/mai
 
 * 以下のコマンドを実行してアプリーケーションを起動
 ```
-java \
--XX:StartFlightRecording=\ # JFR を有効にする
-dumponexit=true,\  # JVM プロセスがシャットダウンした時にファイルにダンプする
-filename=./output/jdbc-bad-sample-FULLGC.jfr\
--Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
+java -XX:StartFlightRecording=dumponexit=true,filename=./output/jdbc-bad-sample-FULLGC.jfr -Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
 ```
 
 * しばらくすると、`Exception in thread "main" java.lang.OutOfMemoryError: Java heap space` が表示される
