@@ -27,26 +27,13 @@ mvn flyway:migrate
 mvn flyway:clean flyway:migrate
 ```
 
-* １万件の csv データ生成 
-
-```
-for i in {1..10000}
-do
-echo "$i,\"name$i\",NULL" >> insert_tableA.csv
-done
-
-for i in {1..10000}
-do
-echo "\"name$i\",\"address$i\"" >> insert_tableB.csv
-done
-```
-
 * csv データを MySQL に insert
 
 ```
 # https://mita2db.hateblo.jp/entry/2020/01/13/163218
 mysql -u root -h 127.0.0.1 -P 13306 -p -D test_database --local-infile=1
 
+# ideaProjects ディレクトリに clone した場合
 mysql> SET GLOBAL local_infile=on;
 mysql> load data local infile "~/ideaProjects/jfr-sample/jdbc-bad-sample/src/main/resources/insert_tableA.csv" into table TABLE_A fields terminated by ',' optionally enclosed by '"';
 mysql> load data local infile "~/ideaProjects/jfr-sample/jdbc-bad-sample/src/main/resources/insert_tableB.csv" into table TABLE_B fields terminated by ',' optionally enclosed by '"';
