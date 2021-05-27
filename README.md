@@ -129,3 +129,6 @@ jcmd `jps -v | grep jdbc-bad-sample | awk '{print $1}'` GC.heap_dump ./output/
 
 * 作成された .hprof ファイルは Memory Analyzer で解析可能
   * http://www.eclipse.org/mat/ からダウンロード可能
+* Memory Analyzer で .hprof ファイルを開いた際、「Getting Started Wizard」が表示されるので「Leak suspects Report」を選択する
+    * これを選択することで「Retained heap」が表示されるようになる
+![mat-getting-sterted-wizard](./img/mat-getting-sterted-wizard.png)
