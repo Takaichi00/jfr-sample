@@ -68,6 +68,15 @@ java -XX:StartFlightRecording=dumponexit=true,filename=./output/jdbc-bad-sample-
 - ヒープに関する詳細情報を取得したい場合
 ```
 java \
+-XX:StartFlightRecording=\
+dumponexit=true,\
+filename=./output/jdbc-bad-sample-FULLGC.jfr,\
+path-to-gc-roots=true \
+-Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
+```
+解説 ver ↓
+```
+java \
 -XX:StartFlightRecording=\ # JFR を有効にする
 dumponexit=true,\  # JVM プロセスがシャットダウンした時にファイルにダンプする
 filename=./output/jdbc-bad-sample-FULLGC.jfr,\
@@ -77,6 +86,17 @@ path-to-gc-roots=true \ # ヒープ統計を有効にする。実行の開始時
 
 - JFR でより詳細な情報を取得したい場合
     - 例えば先程指定した `path-to-gc-roots` オプションは、profile.jfc を指定すると、リークの可能性があるオブジェクトに対して、割り当てられている場所からのスタックトレースを確認することができる
+```
+java \
+-XX:StartFlightRecording=\
+dumponexit=true,\
+filename=./output/jdbc-bad-sample-FULLGC-profile.jfr,\
+disk=true,\
+path-to-gc-roots=true,\
+settings=profile \
+-Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
+```
+↓ 解説用
 ```
 java \
 -XX:StartFlightRecording=\
