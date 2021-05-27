@@ -43,8 +43,14 @@ mysql> load data local infile "~/ideaProjects/jfr-sample/jdbc-bad-sample/src/mai
 ## JFR を有効にしてアプリケーションを起動
 
 * 以下のコマンドを実行してアプリーケーションを起動
+    * `-XX:StartFlightRecording=dumponexit=true` → JFR を有効にする
+    * `dumponexit=true` → JVM プロセスがシャットダウンした時にファイルにダンプする
 ```
-java -XX:StartFlightRecording=dumponexit=true,filename=./output/jdbc-bad-sample-FULLGC.jfr -Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
+java \
+-XX:StartFlightRecording=\
+dumponexit=true,\
+filename=./output/jdbc-bad-sample-FULLGC.jfr \
+-Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
 ```
 
 * しばらくすると、`Exception in thread "main" java.lang.OutOfMemoryError: Java heap space` が表示される
@@ -66,6 +72,7 @@ java -XX:StartFlightRecording=dumponexit=true,filename=./output/jdbc-bad-sample-
 ※ 詳細な情報を取得する際は、JFR のオーバーヘッドも大きくなり性能劣化が発生するため、パフォーマンスに影響がでてはいけない環境での実行は控える
 
 - ヒープに関する詳細情報を取得したい場合
+    - `path-to-gc-roots=true` → ヒープ統計を有効にする。実行の開始時と終了時に Old ガベージ・コレクションがトリガーされる。
 ```
 java \
 -XX:StartFlightRecording=\
@@ -74,18 +81,10 @@ filename=./output/jdbc-bad-sample-FULLGC.jfr,\
 path-to-gc-roots=true \
 -Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
 ```
-解説 ver ↓
-```
-java \
--XX:StartFlightRecording=\ # JFR を有効にする
-dumponexit=true,\  # JVM プロセスがシャットダウンした時にファイルにダンプする
-filename=./output/jdbc-bad-sample-FULLGC.jfr,\
-path-to-gc-roots=true \ # ヒープ統計を有効にする。実行の開始時と終了時に Old ガベージ・コレクションがトリガーされる。
--Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
-```
 
 - JFR でより詳細な情報を取得したい場合
     - 例えば先程指定した `path-to-gc-roots` オプションは、profile.jfc を指定すると、リークの可能性があるオブジェクトに対して、割り当てられている場所からのスタックトレースを確認することができる
+    - `settings=profile` → より詳細な情報を取得する Profile を指定
 ```
 java \
 -XX:StartFlightRecording=\
@@ -94,17 +93,6 @@ filename=./output/jdbc-bad-sample-FULLGC-profile.jfr,\
 disk=true,\
 path-to-gc-roots=true,\
 settings=profile \
--Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
-```
-↓ 解説用
-```
-java \
--XX:StartFlightRecording=\
-dumponexit=true,\
-filename=./output/jdbc-bad-sample-FULLGC-profile.jfr,\
-disk=true,\
-path-to-gc-roots=true,\
-settings=profile \ # より詳細な情報を取得する Profile を指定
 -Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
 ```
 
@@ -136,8 +124,6 @@ jcmd <JAVA_PID> GC.heap_dump <FILE_PATH>
 ```
 jcmd `jps -v | grep jdbc-bad-sample | awk '{print $1}'` GC.heap_dump ./output/
 ```
-
-
 
 ## Memory Analyzer での解析
 
