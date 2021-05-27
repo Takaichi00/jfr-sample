@@ -47,7 +47,7 @@ mysql> load data local infile "~/ideaProjects/jfr-sample/jdbc-bad-sample/src/mai
 java \
 -XX:StartFlightRecording=\ # JFR を有効にする
 dumponexit=true,\  # JVM プロセスがシャットダウンした時にファイルにダンプする
-filename=./output/jdbc-bad-sample-FULLGC.jfr,\
+filename=./output/jdbc-bad-sample-FULLGC.jfr\
 -Xms20M -Xmx20M -jar ./target/jdbc-bad-sample.jar
 ```
 
