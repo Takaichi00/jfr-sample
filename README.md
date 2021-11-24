@@ -61,8 +61,16 @@ filename=./output/jdbc-bad-sample-FULLGC.jfr \
   * Oracle: (https://www.oracle.com/java/technologies/javase/products-jmc8-downloads.html)
   * AdoptOpenJDK: (https://adoptopenjdk.net/jmc.html)
   * Zulu: (https://jp.azul.com/products/zulu-mission-control/)
+  
 * JMC の起動
+  
+  * ※ Mac で起動する場合、以下コマンドから実行する必要がある (2021/11/24 現在, 参考: https://medium.com/@damian.kolasa/running-jdk-mission-control-on-macos-cb2039700adf)
+  
+    * ```
+      JDK\ Mission\ Control.app/Contents/MacOS/jmc -vm /Users/<user>/.sdkman/candidates/java/current/lib/jli/libjli.dylib
+  
   * 「ファイル(F)」→「ファイルを開く」から生成した jdbc-bad-sample-non-FULLGC.jfr, jdbc-bad-sample-FULLGC.jfr を選択すると分析結果が表示されていることを確認
+  
 
 ![non-FULLGC](./img/non-FULLGC-jfr.png)
 
@@ -131,4 +139,4 @@ jcmd `jps -v | grep jdbc-bad-sample | awk '{print $1}'` GC.heap_dump ./output/
   * http://www.eclipse.org/mat/ からダウンロード可能
 * Memory Analyzer で .hprof ファイルを開いた際、「Getting Started Wizard」が表示されるので「Leak suspects Report」を選択する
     * これを選択することで「Retained heap」が表示されるようになる
-![mat-getting-sterted-wizard](./img/mat-getting-sterted-wizard.png)
+    ![mat-getting-sterted-wizard](./img/mat-getting-sterted-wizard.png)
