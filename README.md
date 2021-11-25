@@ -64,10 +64,13 @@ filename=./output/jdbc-bad-sample-FULLGC.jfr \
   
 * JMC の起動
   
-  * ※ Mac で起動する場合、以下コマンドから実行する必要がある (2021/11/24 現在, 参考: https://medium.com/@damian.kolasa/running-jdk-mission-control-on-macos-cb2039700adf)
+  * ※ Mac で起動する場合、Finder から JMC のアイコンをクリックしても起動できない場合は以下コマンドから実行する必要がある。sdkman を利用している場合に事象が発生した。 (2021/11/24 現在, 参考: https://medium.com/@damian.kolasa/running-jdk-mission-control-on-macos-cb2039700adf)
   
     * ```
       JDK\ Mission\ Control.app/Contents/MacOS/jmc -vm /Users/<user>/.sdkman/candidates/java/current/lib/jli/libjli.dylib
+      ```
+  
+    * どうやら、Finder から 起動する際は  `/usr/libexec/java_home` の設定が利用されるよう。sdkman を利用しており、`$JAVA_HOME` を設定していても `/usr/libexec/java_home` の設定が使われるみたいなので、CLI から sdkman の vm を指定して実行する必要がある
   
   * 「ファイル(F)」→「ファイルを開く」から生成した jdbc-bad-sample-non-FULLGC.jfr, jdbc-bad-sample-FULLGC.jfr を選択すると分析結果が表示されていることを確認
   
@@ -137,6 +140,14 @@ jcmd `jps -v | grep jdbc-bad-sample | awk '{print $1}'` GC.heap_dump ./output/
 
 * 作成された .hprof ファイルは Memory Analyzer で解析可能
   * http://www.eclipse.org/mat/ からダウンロード可能
+  
 * Memory Analyzer で .hprof ファイルを開いた際、「Getting Started Wizard」が表示されるので「Leak suspects Report」を選択する
+  
+    * JMC で記載した通り、Mac OS かつ sdkman を利用している場合は `/usr/libexec/java_home` の設定が利用されるよう。Finder から実行しても起動できない場合は以下のコマンドから実行する
+    
+      * ```
+        /Applications/mat.app/Contents/MacOS/MemoryAnalyzer
+        ```
+    
     * これを選択することで「Retained heap」が表示されるようになる
-    ![mat-getting-sterted-wizard](./img/mat-getting-sterted-wizard.png)
+      ![mat-getting-sterted-wizard](./img/mat-getting-sterted-wizard.png)
